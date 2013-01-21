@@ -116,6 +116,7 @@ namespace Domain.GameLife
                 for (int j = 0; j < _heightField; j++)
                 {
                     var tempCountNeighborLiveOrganism = GetCountNeighborLiveOrganism(_arrayCell[i, j]);
+                    tempArray[i, j] = _arrayCell[i, j];
                     if (tempCountNeighborLiveOrganism < 2 || tempCountNeighborLiveOrganism > 3)
                     {
                         if (_arrayCell[i, j].Status == OrganismStatus.Empty || _arrayCell[i, j].Status == OrganismStatus.Dead)
@@ -129,16 +130,14 @@ namespace Domain.GameLife
                     }
                     else if (tempCountNeighborLiveOrganism == 3)
                     {
-                        if (_arrayCell[i, j].Status == OrganismStatus.Born ||
-                            _arrayCell[i, j].Status == OrganismStatus.Live)
-                        {
-                            tempArray[i, j].SetOrganismStatus(OrganismStatus.Born);
-                        }
-                        else
+                        if (_arrayCell[i, j].Status == OrganismStatus.Born || _arrayCell[i, j].Status == OrganismStatus.Live)
                         {
                             tempArray[i, j].SetOrganismStatus(OrganismStatus.Live);
                         }
-                        
+                        else
+                        {
+                            tempArray[i, j].SetOrganismStatus(OrganismStatus.Born);
+                        }
                     }
                     else
                     {
