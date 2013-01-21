@@ -1,0 +1,32 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebUI", "GameLife\WebUI.csproj", "{F5915E98-123C-4B32-812C-9EFBA77F7AE2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameLife.Tests", "GameLife.Tests\GameLife.Tests.csproj", "{AEF50131-0964-4DA7-8AE0-F70A7405D651}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain", "Domain\Domain.csproj", "{7B31A450-52A9-40B6-BA8D-C3EDF0D5BE30}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F5915E98-123C-4B32-812C-9EFBA77F7AE2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F5915E98-123C-4B32-812C-9EFBA77F7AE2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F5915E98-123C-4B32-812C-9EFBA77F7AE2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F5915E98-123C-4B32-812C-9EFBA77F7AE2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AEF50131-0964-4DA7-8AE0-F70A7405D651}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AEF50131-0964-4DA7-8AE0-F70A7405D651}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AEF50131-0964-4DA7-8AE0-F70A7405D651}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AEF50131-0964-4DA7-8AE0-F70A7405D651}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7B31A450-52A9-40B6-BA8D-C3EDF0D5BE30}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7B31A450-52A9-40B6-BA8D-C3EDF0D5BE30}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7B31A450-52A9-40B6-BA8D-C3EDF0D5BE30}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7B31A450-52A9-40B6-BA8D-C3EDF0D5BE30}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
