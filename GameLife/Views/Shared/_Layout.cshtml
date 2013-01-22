@@ -1,17 +1,18 @@
 ﻿@{
     Layout = null;
+    @Scripts.Render("~/bundles/jquery")
 }
-
 <!DOCTYPE html>
 
 <html>
-<head>
-    <meta name="viewport" content="width=device-width" />
-    <title>_Layout</title>
-</head>
-<body>
-    <div>
+    @RenderSection("scripts", required: false)
+    <head>
+        <meta name="viewport" content="width=device-width" />
+        <title>_Layout</title>
+    </head>
+    <body>
+        <div>
         
-    </div>
-</body>
+        </div>
+    </body>
 </html>

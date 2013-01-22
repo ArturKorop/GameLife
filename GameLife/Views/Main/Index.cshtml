@@ -1,16 +1,28 @@
 ﻿@model Domain.GameLife.ModelGameLife
 @{
     ViewBag.Title = "Main";
+    @Scripts.Render("~/bundles/draw")
+    @Scripts.Render("~/bundles/jquery")
 }
+
+<script type="text/javascript">
+    alert("s");
+    $(document).ready(function () {
+        alert("s1");
+        $('#Q').text("aaa");
+    });
+</script> 
 <h2>Main</h2>
+<div id="Q">q</div>
 <table>
-@for (int i = 0; i < Model.HeightField; i++)
-{
-    <tr>
-        @for (int j = 0; j < Model.WidthField; j++)
-        {
-            <td>@Model.Array[j, i].Status</td>
-        }
-    </tr>
-}
+    @for (int i = 0; i < Model.HeightField; i++)
+    {
+        <tr>
+            @for (int j = 0; j < Model.WidthField; j++)
+            {
+                <td>@Model.Array[j, i].Status</td>
+            }
+        </tr>
+    }
 </table>
+
