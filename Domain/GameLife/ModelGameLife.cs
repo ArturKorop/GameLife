@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Web.Script.Serialization;
 
 namespace Domain.GameLife
 {
@@ -81,6 +82,17 @@ namespace Domain.GameLife
         {
             get { return _heightField; }
             set { _heightField = value; }
+        }
+
+        /// <summary>
+        /// Convert object of this class to JSON
+        /// </summary>
+        /// <returns>String</returns>
+        public string ToJSON()
+        {
+            var serializer = new JavaScriptSerializer();
+            var temp = serializer.Serialize(this);
+            return temp;
         }
 
         #endregion

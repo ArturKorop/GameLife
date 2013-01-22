@@ -3,26 +3,18 @@
     ViewBag.Title = "Main";
     @Scripts.Render("~/bundles/draw")
     @Scripts.Render("~/bundles/jquery")
+    var t = Model.ToJSON();
 }
 
 <script type="text/javascript">
-    alert("s");
     $(document).ready(function () {
-        alert("s1");
-        $('#Q').text("aaa");
+        startCanvas($('#temp').text());
     });
 </script> 
 <h2>Main</h2>
-<div id="Q">q</div>
-<table>
-    @for (int i = 0; i < Model.HeightField; i++)
-    {
-        <tr>
-            @for (int j = 0; j < Model.WidthField; j++)
-            {
-                <td>@Model.Array[j, i].Status</td>
-            }
-        </tr>
-    }
-</table>
+<canvas id="canvas" width="500" height="500">
+    Здесь можно указать сообщение для тех,
+    у кого не поддерживается canvas
+</canvas>
+<div id="temp" style="visibility: hidden">@Model.ToJSON()</div>
 
