@@ -17,6 +17,7 @@ var CanvasHeight = 500;
 
 // Begin draw
 function startCanvas(model) {
+    alert(model);
     CanvasWidth = $('#canvas').prop('width');
     CanvasHeight = $('#canvas').prop('height');
     var tempModel = $.parseJSON(model);
@@ -60,6 +61,9 @@ function drawModel() {
         case 3:
             drawCell(Array[i].X, Array[i].Y, 'Dead');
             break;
+        case 4:
+            drawCell(Array[i].X, Array[i].Y, 'Create');
+            break;
         }
     }
 }
@@ -70,7 +74,7 @@ function UpdateData() {
             Array = data.Array;
             drawModel();
         });
-    }, 500);
+    }, 1000);
 }
 // Draw field of cell
 function drawField(width, height) {
@@ -107,6 +111,9 @@ function drawCell(x, y, type) {
         break;
     case 'Dead':
         ctx.fillStyle = '#FF0000';
+        break;
+    case 'Create':
+        ctx.fillStyle = '#FFFF00';
         break;
     }
 ctx.fillRect(CellSize * x + 1, CellSize * y + 1, CellSize - 2, CellSize - 2);

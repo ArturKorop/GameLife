@@ -5,6 +5,7 @@
         Empty,
         Born,
         Live,
-        Dead
+        Dead,
+        Create
     }
 }

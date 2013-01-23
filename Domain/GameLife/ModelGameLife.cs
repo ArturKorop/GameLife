@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Web.Script.Serialization;
 using Domain.Support;
@@ -112,7 +113,7 @@ namespace Domain.GameLife
                     _arrayCell[i, j] = new Cell(i, j);
                     var t = rand.Next(2);
                     if (t < 1)
-                        _arrayCell[i, j].SetCellStatus(OrganismStatus.Born);
+                        _arrayCell[i, j].SetCellStatus(OrganismStatus.Create);
 
                 }
             }
@@ -128,42 +129,14 @@ namespace Domain.GameLife
             {
                 for (int j = 0; j < _heightField; j++)
                 {
-                    var tempCountNeighborLiveOrganism = GetCountNeighborLiveOrganism(_arrayCell[i, j]);
+                    //var prepareResult = _arrayCell[i, j].Prepare(GetNeighborCell(_arrayCell[i, j]));
+                    var neighbor8 = GetNeighborCell(_arrayCell[i, j], 8);
+                    var neighbor24 = GetNeighborCell(_arrayCell[i, j], 24);
+                   
+
+                    var temp = _arrayCell[i, j].Prepare(neighbor24);
+                    _arrayCell[i, j].NextStep(neighbor8);
                     tempArray[i, j] = _arrayCell[i, j];
-                    if (tempCountNeighborLiveOrganism < 2 || tempCountNeighborLiveOrganism > 3)
-                    {
-                        if (_arrayCell[i, j].Status == OrganismStatus.Empty || _arrayCell[i, j].Status == OrganismStatus.Dead)
-                        {
-                            tempArray[i, j].SetCellStatus(OrganismStatus.Empty);
-                        }
-                        else
-                        {
-                            tempArray[i, j].SetCellStatus(OrganismStatus.Dead);
-                        }
-                    }
-                    else if (tempCountNeighborLiveOrganism == 3)
-                    {
-                        if (_arrayCell[i, j].Status == OrganismStatus.Born || _arrayCell[i, j].Status == OrganismStatus.Live)
-                        {
-                            tempArray[i, j].SetCellStatus(OrganismStatus.Live);
-                        }
-                        else
-                        {
-                            tempArray[i, j].SetCellStatus(OrganismStatus.Born);
-                        }
-                    }
-                    else
-                    {
-                        if (_arrayCell[i, j].Status == OrganismStatus.Born ||
-                            _arrayCell[i, j].Status == OrganismStatus.Live)
-                        {
-                            tempArray[i, j].SetCellStatus(OrganismStatus.Live);
-                        }
-                        else
-                        {
-                            tempArray[i, j].SetCellStatus(OrganismStatus.Empty);
-                        }
-                    }
                 }
             }
             _arrayCell = tempArray;
@@ -175,24 +148,41 @@ namespace Domain.GameLife
         /// <returns>Count of neighbor</returns>
         private int GetCountNeighborLiveOrganism(Cell cell)
         {
-            var tempNeighbor = GetNeighborCell(cell);
+            var tempNeighbor = GetNeighborCell(cell, 8);
             return tempNeighbor.Count(item => item.Status == OrganismStatus.Born || item.Status == OrganismStatus.Live);
         }
+
         /// <summary>
-        /// Create <see cref="IEnumerable{T}"/> of neighbor cell for current cell
+        /// Create <see cref="IEnumerable{T}"/> of 8 or 24 neighbor cell for current cell
         /// </summary>
         /// <param name="cell">Current cell</param>
+        /// <param name="neighborCount">Count of neighbor cell: 8, 24, 48</param>
         /// <returns><see cref="IEnumerable{T}"/> of <see cref="Cell"/></returns>
-        private IEnumerable<Cell> GetNeighborCell(Cell cell)
+        private Collection<Cell> GetNeighborCell(Cell cell, int neighborCount)
         {
-            var list = new List<Cell>();
-            for (int i = 0; i < 3; i++)
+            int sizeOfNeighborArea;
+            switch (neighborCount)
             {
-                for (int j = 0; j < 3; j++)
+                case 8:
+                    sizeOfNeighborArea = 3;
+                    break;
+                case 24:
+                    sizeOfNeighborArea = 5;
+                    break;
+                default:
+                    sizeOfNeighborArea = 3;
+                    break;
+            }
+            int different = (sizeOfNeighborArea - 1)/2;
+
+            var list = new Collection<Cell>();
+            for (int i = 0; i < sizeOfNeighborArea; i++)
+            {
+                for (int j = 0; j < sizeOfNeighborArea; j++)
                 {
-                    if (!(i == j && i == 1))
+                    if (!(i == j && i == different))
                     {
-                        list.Add(GetCell(cell.X - 1 + i, cell.Y - 1 + j));
+                        list.Add(GetCell(cell.X - different + i, cell.Y - different + j));
                     }
                 }
             }
@@ -215,7 +205,7 @@ namespace Domain.GameLife
             }
             else if (iTemp > _widthField - 1)
             {
-                iTemp = _widthField % iTemp;
+                iTemp = (_widthField - 1) % iTemp;
             }
             else
             {
@@ -227,7 +217,7 @@ namespace Domain.GameLife
             }
             else if (jTemp > _heightField - 1)
             {
-                jTemp = _heightField % jTemp;
+                jTemp = (_heightField - 1) % jTemp;
             }
             else
             {

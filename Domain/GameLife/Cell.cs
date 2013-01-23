@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using Domain.Support;
 
 namespace Domain.GameLife
@@ -11,7 +13,7 @@ namespace Domain.GameLife
         private readonly int _x;
         private readonly int _y;
         private OrganismStatus _status = OrganismStatus.Empty;
-        private readonly Collection<object> _cellObjects = new Collection<object>();
+        private Organism _cellOrganism = null;
 
         #endregion
 
@@ -36,7 +38,7 @@ namespace Domain.GameLife
                     OrganismBorn();
                     break;
                 case OrganismStatus.Live:
-                    OrganismLive();
+                    //OrganismLive();
                     break;
                 case OrganismStatus.Dead:
                     OrganismDead();
@@ -44,6 +46,39 @@ namespace Domain.GameLife
                 case OrganismStatus.Empty:
                     CellEmpty();
                     break;
+                case OrganismStatus.Create:
+                    OrganismCreate();
+                    break;
+            }
+        }
+
+        public PrepareResult Prepare(Collection<Cell> neighborCells)
+        {
+            if (_cellOrganism != null)
+            {
+                return _cellOrganism.Prepare(neighborCells);
+            }
+            return new PrepareResult();
+        }
+
+        public void NextStep(IEnumerable<Cell> neighborCells)
+        {
+            var enumerable = neighborCells as Cell[] ?? neighborCells.ToArray();
+            var countNeighbors = enumerable.Count(item => item.Status == OrganismStatus.Born || item.Status == OrganismStatus.Live || item.Status == OrganismStatus.Create);
+            if (_cellOrganism == null)
+            {
+                if (countNeighbors == 3)
+                {
+                    SetCellStatus(OrganismStatus.Born);
+                }
+                else if(_status == OrganismStatus.Dead)
+                {
+                    SetCellStatus(OrganismStatus.Empty);
+                }
+            }
+            else
+            {
+                _cellOrganism.Update(enumerable, countNeighbors, this);
             }
         }
 
@@ -56,8 +91,8 @@ namespace Domain.GameLife
         {
             get
             {
-                if (_cellObjects.Count != 0)
-                    return (Organism) _cellObjects[0];
+                if (_cellOrganism != null)
+                    return _cellOrganism;
                 return null;
             }
         }
@@ -76,26 +111,31 @@ namespace Domain.GameLife
 
         #region Private
 
+        private void OrganismCreate()
+        {
+            var rand = new Random();
+            _cellOrganism = new Organism((byte)rand.Next(255), _x, _y);
+        }
+
         private void OrganismBorn()
         {
             var rand = new Random();
-            _cellObjects.Add(new Organism((byte)rand.Next(255)));
+            _cellOrganism = new Organism((byte)rand.Next(255), _x, _y);
         }
 
         private void OrganismLive()
         {
-            if(_cellObjects.Count != 0)
-            ((Organism)_cellObjects[0]).Update();
+            //_cellOrganism.Update();
         }
 
         private void OrganismDead()
         {
-            _cellObjects.Clear();
+            _cellOrganism = null;
         }
 
         private void CellEmpty()
         {
-            _cellObjects.Clear();
+            _cellOrganism = null;
         }
 
         #endregion
