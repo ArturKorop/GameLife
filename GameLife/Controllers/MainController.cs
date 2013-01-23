@@ -15,7 +15,7 @@ namespace WebUI.Controllers
         /// <returns>View with JSON data</returns>
         public ActionResult Index()
         {
-            Session["Model"] = new ModelGameLife(10,10);
+            Session["Model"] = new ModelGameLife(100,50);
             return View(Session["Model"]);
         }
         /// <summary>

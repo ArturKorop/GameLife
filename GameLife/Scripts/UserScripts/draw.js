@@ -9,21 +9,34 @@ var Height;
 var Array;
 // Cell size
 var CellSize = 50;
+// Canvas width
+var CanvasWidth = 500;
+// Canvas height
+var CanvasHeight = 500;
+
 
 // Begin draw
 function startCanvas(model) {
+    CanvasWidth = $('#canvas').prop('width');
+    CanvasHeight = $('#canvas').prop('height');
     var tempModel = $.parseJSON(model);
     Width = tempModel.WidthField;
     Height = tempModel.HeightField;
     Array = tempModel.Array;
-    CellSize = 500 / Width;
+
+    if ((CanvasWidth / Width) > (CanvasHeight / Height)) {
+        CellSize = CanvasHeight / Height;
+    } else {
+        CellSize = CanvasWidth / Width;
+    }
+    
     var canvas = document.getElementById('canvas');
 
-    // Проверяем для IE
+    // Chech for IE
     if (G_vmlCanvasManager != undefined)
         G_vmlCanvasManager.initElement(canvas);
 
-    // Проверяем понимает ли браузер canvas
+    // Check if browser can support canvas
     if (canvas.getContext) {
         ctx = canvas.getContext('2d'); // Получаем 2D контекст
     }
@@ -64,22 +77,20 @@ function drawField(width, height) {
     Width = width;
     Height = height;
     
-    ctx.lineWidth = 1; // Ширина линии
-   // ctx.fillStyle = '#00FF00'; // Цвет заливки
-   // ctx.strokeStyle = '#FF0000'; // Цвет обводки
+    ctx.lineWidth = 1; // Line widht
 
     ctx.strokeRect(0, 0, CellSize * Width, CellSize * Height);
-
-    for (var i = 0; i < Width; i++) {
-        ctx.moveTo(0, CellSize * i); // Начало линии 
-        ctx.lineTo(CellSize * Width, CellSize * i); // Узел линии  
-        ctx.stroke();
+    var i;
+    for (i = 0; i < Width; i++) {
+        ctx.moveTo(CellSize * i, 0); // Begin line
+        ctx.lineTo(CellSize * i, CellSize * Height);
+        ctx.stroke(); // End line
     }
 
-    for (var i = 0; i < Height; i++) {
-        ctx.moveTo(CellSize * i, 0); // Начало линии 
-        ctx.lineTo(CellSize * i, CellSize * Height); // Узел линии  
-        ctx.stroke();
+    for (i = 0; i < Height; i++) {
+        ctx.moveTo(0, CellSize * i); // Begin line
+        ctx.lineTo(CellSize * Width, CellSize * i);
+        ctx.stroke(); // End line
     }
 }
 // Draw one cell with special color
