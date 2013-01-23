@@ -1,4 +1,4 @@
-﻿namespace Domain.GameLife
+﻿namespace Domain.Support
 {
     public enum OrganismStatus
     {

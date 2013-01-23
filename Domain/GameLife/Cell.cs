@@ -1,4 +1,6 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
+using Domain.Support;
 
 namespace Domain.GameLife
 {
@@ -25,7 +27,7 @@ namespace Domain.GameLife
 
         #region Public
 
-        public void SetOrganismStatus(OrganismStatus status)
+        public void SetCellStatus(OrganismStatus status)
         {
             _status = status;
             switch (status)
@@ -76,7 +78,8 @@ namespace Domain.GameLife
 
         private void OrganismBorn()
         {
-            _cellObjects.Add(new Organism());
+            var rand = new Random();
+            _cellObjects.Add(new Organism((byte)rand.Next(255)));
         }
 
         private void OrganismLive()

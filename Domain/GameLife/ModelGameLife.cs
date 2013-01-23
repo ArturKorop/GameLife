@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Script.Serialization;
+using Domain.Support;
 
 namespace Domain.GameLife
 {
@@ -111,7 +112,7 @@ namespace Domain.GameLife
                     _arrayCell[i, j] = new Cell(i, j);
                     var t = rand.Next(2);
                     if (t < 1)
-                        _arrayCell[i, j].SetOrganismStatus(OrganismStatus.Born);
+                        _arrayCell[i, j].SetCellStatus(OrganismStatus.Born);
 
                 }
             }
@@ -133,22 +134,22 @@ namespace Domain.GameLife
                     {
                         if (_arrayCell[i, j].Status == OrganismStatus.Empty || _arrayCell[i, j].Status == OrganismStatus.Dead)
                         {
-                            tempArray[i, j].SetOrganismStatus(OrganismStatus.Empty);
+                            tempArray[i, j].SetCellStatus(OrganismStatus.Empty);
                         }
                         else
                         {
-                            tempArray[i, j].SetOrganismStatus(OrganismStatus.Dead);
+                            tempArray[i, j].SetCellStatus(OrganismStatus.Dead);
                         }
                     }
                     else if (tempCountNeighborLiveOrganism == 3)
                     {
                         if (_arrayCell[i, j].Status == OrganismStatus.Born || _arrayCell[i, j].Status == OrganismStatus.Live)
                         {
-                            tempArray[i, j].SetOrganismStatus(OrganismStatus.Live);
+                            tempArray[i, j].SetCellStatus(OrganismStatus.Live);
                         }
                         else
                         {
-                            tempArray[i, j].SetOrganismStatus(OrganismStatus.Born);
+                            tempArray[i, j].SetCellStatus(OrganismStatus.Born);
                         }
                     }
                     else
@@ -156,11 +157,11 @@ namespace Domain.GameLife
                         if (_arrayCell[i, j].Status == OrganismStatus.Born ||
                             _arrayCell[i, j].Status == OrganismStatus.Live)
                         {
-                            tempArray[i, j].SetOrganismStatus(OrganismStatus.Live);
+                            tempArray[i, j].SetCellStatus(OrganismStatus.Live);
                         }
                         else
                         {
-                            tempArray[i, j].SetOrganismStatus(OrganismStatus.Empty);
+                            tempArray[i, j].SetCellStatus(OrganismStatus.Empty);
                         }
                     }
                 }
