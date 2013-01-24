@@ -7,19 +7,38 @@ using Domain.Support;
 
 namespace Domain.GameLife
 {
+    /// <summary>
+    /// Class that provides a description of organism
+    /// </summary>
     public class Organism
     {
         #region Variable
-
+        /// <summary>
+        ///  Age of organism
+        /// </summary>
         private int _age;
+        /// <summary>
+        /// Genome of organism
+        /// </summary>
         private readonly byte _genome;
+        /// <summary>
+        /// Coordinate x of organism
+        /// </summary>
         private int _x;
+        /// <summary>
+        /// Coordinate y of organism
+        /// </summary>
         private int _y;
 
         #endregion
 
         #region Init
-
+        /// <summary>
+        /// Constructor of organism
+        /// </summary>
+        /// <param name="genome">Genome: 0..255</param>
+        /// <param name="x">Coordinate x</param>
+        /// <param name="y">Coordinate y</param>
         public Organism(byte genome,int x, int y)
         {
             _x = x;
@@ -31,17 +50,26 @@ namespace Domain.GameLife
         #endregion
 
         #region Public
-
+        /// <summary>
+        /// Age of organism
+        /// </summary>
         public int Age
         {
             get { return _age; }
         }
-
+        /// <summary>
+        /// Genome of organism
+        /// </summary>
         public byte Genome
         {
             get { return _genome; }
         }
-
+        /// <summary>
+        /// Calculate next step of organism life
+        /// </summary>
+        /// <param name="neighborCells">Nearest neighbor <see cref="Cell"/> of organism - 8</param>
+        /// <param name="countNeighbors">Count of nearest life organism</param>
+        /// <param name="currentCell">Current cell</param>
         public void Update(IEnumerable<Cell> neighborCells, int countNeighbors, Cell currentCell)
         {
             _age++;
@@ -55,23 +83,62 @@ namespace Domain.GameLife
                 currentCell.SetCellStatus(OrganismStatus.Live);
             }
         }
-
+        /// <summary>
+        /// Prepare to next step
+        /// </summary>
+        /// <param name="neighborCells">Nearest neighbor <see cref="Cell"/> of organism - 24</param>
+        /// <returns><see cref="PrepareResult"/></returns>
         public PrepareResult Prepare(Collection<Cell> neighborCells)
         {
             var array = new Cell[5,5];
-            var count = 0;
-            for (int i = 0; i < 5; i++)
+            var migrationMaybe = new Collection<Cell>();
+            var dictionary = new Dictionary<Cell, int>();
+
+            CreateArray5X5(neighborCells, array);
+            CreateDictionaryOfCountNeighbor(array, dictionary);
+            CreateAvaliableMigration(dictionary, migrationMaybe);
+
+            var result = new PrepareResult();
+            if (migrationMaybe.Count > 0)
             {
-                for (int j = 0; j < 5; j++)
+                var rand = new Random(Environment.TickCount + migrationMaybe.Count());
+                var migration = migrationMaybe[rand.Next(0, migrationMaybe.Count)];
+                var from = new Coordinate {X = _x, Y = _y};
+                var to = new Coordinate {X = migration.X, Y = migration.Y};
+                _x = to.X;
+                _y = to.Y;
+                result.SetMigration(from, to, this);
+            }
+            return result;
+        }
+        /// <summary>
+        /// Create collection of avaliable migration path
+        /// </summary>
+        /// <param name="dictionary">Input data</param>
+        /// <param name="migrationMaybe">Output data</param>
+        private void CreateAvaliableMigration(Dictionary<Cell, int> dictionary, Collection<Cell> migrationMaybe)
+        {
+            for (int i = 1; i < 9; i++)
+            {
+                if (Genome.GetBit(i))
                 {
-                    if (!(i == j && i == 2))
+                    foreach (var item in dictionary)
                     {
-                        array[i, j] = neighborCells[count];
-                        count++;
+                        if (item.Value == (i))
+                        {
+                            migrationMaybe.Add(item.Key);
+                        }
                     }
                 }
             }
-            var dictionary = new Dictionary<Cell,int>();
+        }
+        /// <summary>
+        /// Create collection of neighbor cell with count of they neighbor
+        /// </summary>
+        /// <param name="array">Array of all neighbor</param>
+        /// <param name="dictionary">output data</param>
+        private void CreateDictionaryOfCountNeighbor(Cell[,] array, Dictionary<Cell, int> dictionary)
+        {
             for (int i = -1; i < 2; i++)
             {
                 for (int j = -1; j < 2; j++)
@@ -95,36 +162,30 @@ namespace Domain.GameLife
                         {
                             countOrganism--;
                         }
-                        dictionary.Add(temp,countOrganism);
+                        dictionary.Add(temp, countOrganism);
                     }
                 }
             }
-            var migrationMaybe = new Collection<Cell>();
-            for (int i = 1; i < 9; i++)
+        }
+        /// <summary>
+        /// Convert collection of neigbor to array 5 x 5
+        /// </summary>
+        /// <param name="neighborCells">Collection of neighbors</param>
+        /// <param name="array">Output data</param>
+        private void CreateArray5X5(Collection<Cell> neighborCells, Cell[,] array)
+        {
+            var count = 0;
+            for (int i = 0; i < 5; i++)
             {
-                if (Genome.GetBit(i))
+                for (int j = 0; j < 5; j++)
                 {
-                    foreach (var item in dictionary)
+                    if (!(i == j && i == 2))
                     {
-                        if (item.Value == (i))
-                        {
-                            migrationMaybe.Add(item.Key);
-                        }
+                        array[i, j] = neighborCells[count];
+                        count++;
                     }
                 }
             }
-            var result = new PrepareResult();
-            if (migrationMaybe.Count > 0)
-            {
-                var rand = new Random(Environment.TickCount + migrationMaybe.Count());
-                var migration = migrationMaybe[rand.Next(0, migrationMaybe.Count)];
-                var from = new Coordinate {X = _x, Y = _y};
-                var to = new Coordinate {X = migration.X, Y = migration.Y};
-                _x = to.X;
-                _y = to.Y;
-                result.SetMigration(from, to, this);
-            }
-            return result;
         }
 
         #endregion

@@ -76,6 +76,7 @@ function UpdateData() {
         $.post("/Main/UpdateGameModel", {}, function (data) {
             Array = data.Array;
             drawModel();
+            $('#Age').text(data.Age);
         });
     }, 1000);
 }
