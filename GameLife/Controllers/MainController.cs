@@ -15,7 +15,7 @@ namespace WebUI.Controllers
         /// <returns>View with JSON data</returns>
         public ActionResult Index()
         {
-            Session["Model"] = new ModelGameLife(10,10);
+            Session["Model"] = new ModelGameLife(0,0);
             Session["Object"] = new object();
             return View(Session["Model"]);
         }
@@ -36,6 +36,22 @@ namespace WebUI.Controllers
                     return Json(Session["Model"]);
                 }
                 return View("Index",Session["Model"]);
+            }
+            return null;
+        }
+        public ActionResult PreapreGameModel()
+        {
+            if ((Session["Model"]) != null)
+            {
+                lock (Session["Object"])
+                {
+                    ((ModelGameLife)Session["Model"]).Prepare();
+                }
+                if (Request.IsAjaxRequest())
+                {
+                    return Json(Session["Model"]);
+                }
+                return View("Index", Session["Model"]);
             }
             return null;
         }

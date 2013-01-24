@@ -72,13 +72,26 @@ function drawModel() {
 }
 // Update data
 function UpdateData() {
-    setInterval(function () {
-        $.post("/Main/UpdateGameModel", {}, function (data) {
-            Array = data.Array;
-            drawModel();
-            $('#Age').text(data.Age);
-        });
-    }, 1000);
+    var updateInterval = setInterval(function () {
+        prepare();
+        var b2 = setTimeout(step(), 1000);
+    }, 2000);
+}
+// Step of life
+function step() {
+    $.post("/Main/UpdateGameModel", {}, function(data) {
+        Array = data.Array;
+        drawModel();
+        $('#Age').text(data.Age);
+    });
+}
+// Prepare to step
+function prepare() {
+    $.post("/Main/PreapreGameModel", {}, function (data) {
+        Array = data.Array;
+        drawModel();
+        $('#Age').text(data.Age + ' prepare');
+    });
 }
 // Draw field of cell
 function drawField(width, height) {

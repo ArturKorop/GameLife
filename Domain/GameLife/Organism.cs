@@ -13,33 +13,42 @@ namespace Domain.GameLife
     public class Organism
     {
         #region Variable
+
         /// <summary>
         ///  Age of organism
         /// </summary>
         private int _age;
+
         /// <summary>
         /// Genome of organism
         /// </summary>
         private readonly byte _genome;
+
         /// <summary>
         /// Coordinate x of organism
         /// </summary>
         private int _x;
+
         /// <summary>
         /// Coordinate y of organism
         /// </summary>
         private int _y;
+        /// <summary>
+        /// Is was migration
+        /// </summary>
+        private bool _migrant;
 
         #endregion
 
         #region Init
+
         /// <summary>
         /// Constructor of organism
         /// </summary>
         /// <param name="genome">Genome: 0..255</param>
         /// <param name="x">Coordinate x</param>
         /// <param name="y">Coordinate y</param>
-        public Organism(byte genome,int x, int y)
+        public Organism(byte genome, int x, int y)
         {
             _x = x;
             _y = y;
@@ -50,6 +59,7 @@ namespace Domain.GameLife
         #endregion
 
         #region Public
+
         /// <summary>
         /// Age of organism
         /// </summary>
@@ -57,6 +67,7 @@ namespace Domain.GameLife
         {
             get { return _age; }
         }
+
         /// <summary>
         /// Genome of organism
         /// </summary>
@@ -64,6 +75,15 @@ namespace Domain.GameLife
         {
             get { return _genome; }
         }
+
+        /// <summary>
+        /// Is was migration
+        /// </summary>
+        public bool Migrant
+        {
+            get { return _migrant; }
+        }
+
         /// <summary>
         /// Calculate next step of organism life
         /// </summary>
@@ -73,7 +93,7 @@ namespace Domain.GameLife
         public void Update(IEnumerable<Cell> neighborCells, int countNeighbors, Cell currentCell)
         {
             _age++;
-
+            _migrant = false;
             if (countNeighbors < 2 || countNeighbors > 3)
             {
                 currentCell.SetCellStatus(OrganismStatus.Dead);
@@ -83,6 +103,7 @@ namespace Domain.GameLife
                 currentCell.SetCellStatus(OrganismStatus.Live);
             }
         }
+
         /// <summary>
         /// Prepare to next step
         /// </summary>
@@ -90,27 +111,71 @@ namespace Domain.GameLife
         /// <returns><see cref="PrepareResult"/></returns>
         public PrepareResult Prepare(Collection<Cell> neighborCells)
         {
-            var array = new Cell[5,5];
-            var migrationMaybe = new Collection<Cell>();
-            var dictionary = new Dictionary<Cell, int>();
-
-            CreateArray5X5(neighborCells, array);
-            CreateDictionaryOfCountNeighbor(array, dictionary);
-            CreateAvaliableMigration(dictionary, migrationMaybe);
-
             var result = new PrepareResult();
-            if (migrationMaybe.Count > 0)
+            if (!_migrant)
             {
-                var rand = new Random(Environment.TickCount + migrationMaybe.Count());
-                var migration = migrationMaybe[rand.Next(0, migrationMaybe.Count)];
-                var from = new Coordinate {X = _x, Y = _y};
-                var to = new Coordinate {X = migration.X, Y = migration.Y};
-                _x = to.X;
-                _y = to.Y;
-                result.SetMigration(from, to, this);
+                var array = new Cell[5, 5];
+                var migrationMaybe = new Collection<Cell>();
+                var dictionary = new Dictionary<Cell, int>();
+
+                CreateArray5X5(neighborCells, array);
+                if (IsNeedMigration(array))
+                {
+                    CreateDictionaryOfCountNeighbor(array, dictionary);
+                    CreateAvaliableMigration(dictionary, migrationMaybe);
+
+
+                    if (migrationMaybe.Count > 0)
+                    {
+                        var rand = new Random(Environment.TickCount + migrationMaybe.Count());
+                        var migration = migrationMaybe[rand.Next(0, migrationMaybe.Count)];
+                        var from = new Coordinate {X = _x, Y = _y};
+                        var to = new Coordinate {X = migration.X, Y = migration.Y};
+                        _x = to.X;
+                        _y = to.Y;
+                        _migrant = true;
+                        result.SetMigration(from, to, this);
+                    }
+                }
             }
             return result;
         }
+
+        #endregion
+
+        #region Private
+
+        /// <summary>
+        /// Check is migration is need
+        /// </summary>
+        /// <param name="array">Array of neighboe cell</param>
+        /// <returns><see cref="bool"/></returns>
+        private bool IsNeedMigration(Cell[,] array)
+        {
+            var countNeighbor = 0;
+            for (int i = -1; i < 2; i++)
+            {
+                for (int j = -1; j < 2; j++)
+                {
+                    if (!((i == j) && (i == 0)) && array[2 + i, 2 + j].Organism != null)
+                    {
+                        countNeighbor++;
+                    }
+                }
+            }
+            for (int i = 1; i < 9; i++)
+            {
+                if (_genome.GetBit(i))
+                {
+                    if (countNeighbor == i)
+                    {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+
         /// <summary>
         /// Create collection of avaliable migration path
         /// </summary>
@@ -132,6 +197,7 @@ namespace Domain.GameLife
                 }
             }
         }
+
         /// <summary>
         /// Create collection of neighbor cell with count of they neighbor
         /// </summary>
@@ -167,6 +233,7 @@ namespace Domain.GameLife
                 }
             }
         }
+
         /// <summary>
         /// Convert collection of neigbor to array 5 x 5
         /// </summary>
@@ -189,11 +256,5 @@ namespace Domain.GameLife
         }
 
         #endregion
-
-        #region Private
-
-        #endregion
     }
-
-    
 }

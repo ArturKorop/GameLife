@@ -84,7 +84,13 @@ namespace Domain.GameLife
             _age++;
             GameLifeEngineNextStep();
         }
-
+        /// <summary>
+        /// Prepare to next step of llife
+        /// </summary>
+        public void Prepare()
+        {
+            GameLifeEnginePrepare();
+        }
         /// <summary>
         /// Array of cells on field in game
         /// </summary>

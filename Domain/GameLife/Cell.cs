@@ -126,6 +126,7 @@ namespace Domain.GameLife
         /// <param name="organism"><see cref="Organism"/></param>
         public void SetMigration(Organism organism)
         {
+            _status = OrganismStatus.Live;;
             if (_cellOrganism == null)
             {
                 _cellOrganism = organism;
