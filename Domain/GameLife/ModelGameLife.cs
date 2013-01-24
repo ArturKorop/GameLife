@@ -25,6 +25,10 @@ namespace Domain.GameLife
         /// Array of cells on field in game
         /// </summary>
         private Cell[,] _arrayCell;
+        /// <summary>
+        /// Age of model
+        /// </summary>
+        private int _age;
 
         #endregion
 
@@ -36,6 +40,7 @@ namespace Domain.GameLife
         public ModelGameLife()
         {
             _arrayCell = new Cell[_widthField, _heightField];
+            _age = 0;
             InitGameLifeEngine();
         }
         /// <summary>
@@ -45,10 +50,22 @@ namespace Domain.GameLife
         /// <param name="heightField">Height of field</param>
         public ModelGameLife(int widthField, int heightField)
         {
-            _widthField = widthField;
-            _heightField = heightField;
-            _arrayCell = new Cell[_widthField, _heightField];
-            InitGameLifeEngine();
+            if (widthField != 0 || heightField != 0)
+            {
+                _age = 0;
+                _widthField = widthField;
+                _heightField = heightField;
+                _arrayCell = new Cell[_widthField,_heightField];
+                InitGameLifeEngine();
+            }
+            else
+            {
+                _age = 0;
+                _widthField = 10;
+                _heightField = 10;
+                _arrayCell = new Cell[_widthField, _heightField];
+                InitGameLifeEngineTest();
+            }
         }
 
         #endregion
@@ -60,6 +77,7 @@ namespace Domain.GameLife
         /// </summary>
         public void Update()
         {
+            _age++;
             GameLifeEngineNextStep();
         }
         /// <summary>
@@ -84,6 +102,13 @@ namespace Domain.GameLife
         {
             get { return _heightField; }
             set { _heightField = value; }
+        }
+        /// <summary>
+        /// Age of model
+        /// </summary>
+        public int Age
+        {
+            get { return _age; }
         }
 
         /// <summary>
@@ -119,27 +144,73 @@ namespace Domain.GameLife
             }
         }
         /// <summary>
+        /// Set begin status of game for testing
+        /// </summary>
+        private void InitGameLifeEngineTest()
+        {
+            for (int i = 0; i < _widthField; i++)
+            {
+                for (int j = 0; j < _heightField; j++)
+                {
+                    _arrayCell[i, j] = new Cell(i, j);
+                }
+            }
+            _arrayCell[2, 2].SetCellStatus(OrganismStatus.Create);
+            _arrayCell[2, 3].SetCellStatus(OrganismStatus.Create);
+            _arrayCell[2, 4].SetCellStatus(OrganismStatus.Create);
+
+            _arrayCell[5, 5].SetCellStatus(OrganismStatus.Create);
+            _arrayCell[5, 6].SetCellStatus(OrganismStatus.Create);
+            _arrayCell[5, 7].SetCellStatus(OrganismStatus.Create);
+            _arrayCell[4, 7].SetCellStatus(OrganismStatus.Create);
+
+            _arrayCell[9, 7].SetCellStatus(OrganismStatus.Create);
+            _arrayCell[9, 8].SetCellStatus(OrganismStatus.Create);
+            _arrayCell[0, 7].SetCellStatus(OrganismStatus.Create);
+            _arrayCell[0, 8].SetCellStatus(OrganismStatus.Create);
+        }
+        /// <summary>
         /// Claculate next step of game
         /// </summary>
         private void GameLifeEngineNextStep()
         {
             var tempArray = new Cell[_widthField,_heightField];
-            InitArrayCell(ref tempArray);
+            //InitArrayCell(ref tempArray);
             for (int i = 0; i < _widthField; i++)
             {
                 for (int j = 0; j < _heightField; j++)
                 {
                     //var prepareResult = _arrayCell[i, j].Prepare(GetNeighborCell(_arrayCell[i, j]));
                     var neighbor8 = GetNeighborCell(_arrayCell[i, j], 8);
-                    var neighbor24 = GetNeighborCell(_arrayCell[i, j], 24);
-                   
+                   // var neighbor24 = GetNeighborCell(_arrayCell[i, j], 24);
 
-                    var temp = _arrayCell[i, j].Prepare(neighbor24);
+                    var temp = _arrayCell[i, j].Clone();
                     _arrayCell[i, j].NextStep(neighbor8);
                     tempArray[i, j] = _arrayCell[i, j];
+                    _arrayCell[i, j] = temp;
                 }
             }
             _arrayCell = tempArray;
+        }
+        /// <summary>
+        /// Claculate prepare to next step of game
+        /// </summary>
+        private void GameLifeEnginePrepare()
+        {
+            //InitArrayCell(ref tempArray);
+            for (int i = 0; i < _widthField; i++)
+            {
+                for (int j = 0; j < _heightField; j++)
+                {
+                    var neighbor24 = GetNeighborCell(_arrayCell[i, j], 24);
+                    var result = _arrayCell[i, j].Prepare(neighbor24);
+                    if (result.Migration.IsMigrartion)
+                    {
+                        _arrayCell[result.Migration.From.X,result.Migration.From.Y].SetCellStatus(OrganismStatus.Empty);
+                        _arrayCell[result.Migration.To.X,result.Migration.To.Y].SetMigration(result.Migration.Organism);
+                    }
+                }
+            }
         }
         /// <summary>
         /// Calculate live and born neighbor of cell
@@ -205,7 +276,7 @@ namespace Domain.GameLife
             }
             else if (iTemp > _widthField - 1)
             {
-                iTemp = (_widthField - 1) % iTemp;
+                iTemp = iTemp % (_widthField);
             }
             else
             {
@@ -217,7 +288,7 @@ namespace Domain.GameLife
             }
             else if (jTemp > _heightField - 1)
             {
-                jTemp = (_heightField - 1) % jTemp;
+                jTemp = jTemp % (_heightField - 1);
             }
             else
             {

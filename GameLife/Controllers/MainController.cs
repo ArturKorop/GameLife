@@ -16,18 +16,28 @@ namespace WebUI.Controllers
         public ActionResult Index()
         {
             Session["Model"] = new ModelGameLife(10,10);
+            Session["Object"] = new object();
             return View(Session["Model"]);
         }
         /// <summary>
         /// Update next step
         /// </summary>
-        /// <returns>JSON data</returns>
-        public JsonResult UpdateGameModel()
+        /// <returns>JSON data or View</returns>
+        public ActionResult UpdateGameModel()
         {
             if ((Session["Model"]) != null)
-                ((ModelGameLife)Session["Model"]).Update();
-            return Json(Session["Model"]);
+            {
+                lock (Session["Object"])
+                {
+                    ((ModelGameLife)Session["Model"]).Update();
+                }
+                if (Request.IsAjaxRequest())
+                {
+                    return Json(Session["Model"]);
+                }
+                return View("Index",Session["Model"]);
+            }
+            return null;
         }
-
     }
 }

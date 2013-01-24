@@ -71,20 +71,60 @@ namespace Domain.GameLife
                     }
                 }
             }
-            var tempResult = new Collection<PrepareResult>();
-            foreach (var neighborNeighborCell in neighborCells)
+            var dictionary = new Dictionary<Cell,int>();
+            for (int i = -1; i < 2; i++)
             {
-                //var count = neighborNeighborCell.Count(item => item.Status == OrganismStatus.Born || item.Status == OrganismStatus.Live || item.Status == OrganismStatus.Create) - 1;
-                for (int i = 0; i < 8; i++)
+                for (int j = -1; j < 2; j++)
                 {
-                  //  if (_genome.GetBit(i) && count == i + 1)
-                 //   {
-                       // tempResult.Add((new PrepareResult()).SetMigration(new Coordinate{ X = _x, Y = _y},new Coordinate{X = }));
-                 //   }
-                    
+                    var temp = array[2 + i, 2 + j];
+                    if (temp != null && temp.Organism == null)
+                    {
+                        var countOrganism = 0;
+                        for (int k = -1; k < 2; k++)
+                        {
+                            for (int l = -1; l < 2; l++)
+                            {
+                                var temp2 = array[2 + i + k, 2 + j + l];
+                                if (temp2 != null && temp2.Organism != null)
+                                {
+                                    countOrganism++;
+                                }
+                            }
+                        }
+                        if (temp.Organism != null)
+                        {
+                            countOrganism--;
+                        }
+                        dictionary.Add(temp,countOrganism);
+                    }
                 }
             }
-            return new PrepareResult();
+            var migrationMaybe = new Collection<Cell>();
+            for (int i = 1; i < 9; i++)
+            {
+                if (Genome.GetBit(i))
+                {
+                    foreach (var item in dictionary)
+                    {
+                        if (item.Value == (i))
+                        {
+                            migrationMaybe.Add(item.Key);
+                        }
+                    }
+                }
+            }
+            var result = new PrepareResult();
+            if (migrationMaybe.Count > 0)
+            {
+                var rand = new Random(Environment.TickCount + migrationMaybe.Count());
+                var migration = migrationMaybe[rand.Next(0, migrationMaybe.Count)];
+                var from = new Coordinate {X = _x, Y = _y};
+                var to = new Coordinate {X = migration.X, Y = migration.Y};
+                _x = to.X;
+                _y = to.Y;
+                result.SetMigration(from, to, this);
+            }
+            return result;
         }
 
         #endregion

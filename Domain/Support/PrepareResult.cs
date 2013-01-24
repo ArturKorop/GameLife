@@ -1,14 +1,22 @@
-﻿namespace Domain.Support
+﻿using Domain.GameLife;
+
+namespace Domain.Support
 {
     public class PrepareResult
     {
         private readonly Migration _migration = new Migration();
         
-        public void SetMigration(Coordinate from, Coordinate to)
+        public void SetMigration(Coordinate from, Coordinate to, Organism organism)
         {
             _migration.IsMigrartion = true;
             _migration.From = from;
             _migration.To = to;
+            _migration.Organism = organism;
+        }
+
+        public Migration Migration
+        {
+            get { return _migration; }
         }
 
     }
@@ -23,6 +31,7 @@
         public bool IsMigrartion { get; set; }
         public Coordinate From { get; set; }
         public Coordinate To { get; set; }
+        public Organism Organism { get; set; }
     }
     public struct Coordinate
     {

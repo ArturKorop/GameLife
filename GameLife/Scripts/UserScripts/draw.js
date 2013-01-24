@@ -13,17 +13,19 @@ var CellSize = 50;
 var CanvasWidth = 500;
 // Canvas height
 var CanvasHeight = 500;
-
+// Model age
+var Age = 0;
 
 // Begin draw
 function startCanvas(model) {
-    alert(model);
+    //alert(model);
     CanvasWidth = $('#canvas').prop('width');
     CanvasHeight = $('#canvas').prop('height');
     var tempModel = $.parseJSON(model);
     Width = tempModel.WidthField;
     Height = tempModel.HeightField;
     Array = tempModel.Array;
+    Age = tempModel.Age;
 
     if ((CanvasWidth / Width) > (CanvasHeight / Height)) {
         CellSize = CanvasHeight / Height;
@@ -47,6 +49,7 @@ function startCanvas(model) {
 }
 // Draw all cell for them status
 function drawModel() {
+    $('#Age').text(Age);
     for (var i = 0; i < Width * Height; i++) {
         switch (Array[i].Status) {
         case 0:

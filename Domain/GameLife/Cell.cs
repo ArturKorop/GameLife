@@ -25,6 +25,14 @@ namespace Domain.GameLife
             _y = y;
         }
 
+        public Cell(Cell cell)
+        {
+            _x = cell.X;
+            _y = cell.Y;
+            _status = cell.Status;
+            _cellOrganism = cell.Organism;
+        }
+
         #endregion
 
         #region Public
@@ -38,7 +46,7 @@ namespace Domain.GameLife
                     OrganismBorn();
                     break;
                 case OrganismStatus.Live:
-                    //OrganismLive();
+                    OrganismLive();
                     break;
                 case OrganismStatus.Dead:
                     OrganismDead();
@@ -82,6 +90,24 @@ namespace Domain.GameLife
             }
         }
 
+        public void SetMigration(Organism organism)
+        {
+            if (_cellOrganism == null)
+            {
+                _cellOrganism = organism;
+            }
+            else
+            {
+                throw new Exception("Migration to full occupied cell");
+            }
+        }
+
+        public Cell Clone()
+        {
+            return new Cell(this);
+
+        }
+
         public OrganismStatus Status
         {
             get { return _status; }
@@ -113,19 +139,19 @@ namespace Domain.GameLife
 
         private void OrganismCreate()
         {
-            var rand = new Random();
-            _cellOrganism = new Organism((byte)rand.Next(255), _x, _y);
+            var rand = new Random(_x*_y + _x + _y + Environment.TickCount);
+            _cellOrganism = new Organism((byte) rand.Next(255), _x, _y);
         }
 
         private void OrganismBorn()
         {
-            var rand = new Random();
-            _cellOrganism = new Organism((byte)rand.Next(255), _x, _y);
+            var rand = new Random(_x * _y + _x + _y + Environment.TickCount);
+            _cellOrganism = new Organism((byte) rand.Next(255), _x, _y);
         }
 
         private void OrganismLive()
         {
-            //_cellOrganism.Update();
+           
         }
 
         private void OrganismDead()
