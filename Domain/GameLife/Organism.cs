@@ -22,7 +22,7 @@ namespace Domain.GameLife
         /// <summary>
         /// Genome of organism
         /// </summary>
-        private readonly byte _genome;
+        private readonly int _genome;
 
         /// <summary>
         /// Coordinate x of organism
@@ -45,10 +45,10 @@ namespace Domain.GameLife
         /// <summary>
         /// Constructor of organism
         /// </summary>
-        /// <param name="genome">Genome: 0..255</param>
+        /// <param name="genome">Genome: 0..511</param>
         /// <param name="x">Coordinate x</param>
         /// <param name="y">Coordinate y</param>
-        public Organism(byte genome, int x, int y)
+        public Organism(int genome, int x, int y)
         {
             _x = x;
             _y = y;
@@ -71,7 +71,7 @@ namespace Domain.GameLife
         /// <summary>
         /// Genome of organism
         /// </summary>
-        public byte Genome
+        public int Genome
         {
             get { return _genome; }
         }
@@ -163,11 +163,11 @@ namespace Domain.GameLife
                     }
                 }
             }
-            for (int i = 1; i < 9; i++)
+            for (int i = 1; i < 10; i++)
             {
                 if (_genome.GetBit(i))
                 {
-                    if (countNeighbor == i)
+                    if (countNeighbor == i - 1)
                     {
                         return false;
                     }
@@ -183,13 +183,13 @@ namespace Domain.GameLife
         /// <param name="migrationMaybe">Output data</param>
         private void CreateAvaliableMigration(Dictionary<Cell, int> dictionary, Collection<Cell> migrationMaybe)
         {
-            for (int i = 1; i < 9; i++)
+            for (int i = 1; i < 10; i++)
             {
-                if (Genome.GetBit(i))
+                if (_genome.GetBit(i))
                 {
                     foreach (var item in dictionary)
                     {
-                        if (item.Value == (i))
+                        if (item.Value == (i - 1))
                         {
                             migrationMaybe.Add(item.Key);
                         }

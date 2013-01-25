@@ -187,7 +187,7 @@ namespace Domain.GameLife
         private void OrganismCreate()
         {
             var rand = new Random(_x*_y + _x + _y + Environment.TickCount);
-            _cellOrganism = new Organism((byte) rand.Next(255), _x, _y);
+            _cellOrganism = new Organism(rand.Next(511), _x, _y);
         }
         /// <summary>
         /// Organism born
@@ -195,7 +195,7 @@ namespace Domain.GameLife
         private void OrganismBorn()
         {
             var rand = new Random(_x * _y + _x + _y + Environment.TickCount);
-            _cellOrganism = new Organism((byte) rand.Next(255), _x, _y);
+            _cellOrganism = new Organism(rand.Next(511), _x, _y);
         }
         /// <summary>
         /// Organism live

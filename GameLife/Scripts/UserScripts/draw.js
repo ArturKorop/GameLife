@@ -18,7 +18,7 @@ var Age = 0;
 
 // Begin draw
 function startCanvas(model) {
-    //alert(model);
+    alert(model);
     CanvasWidth = $('#canvas').prop('width');
     CanvasHeight = $('#canvas').prop('height');
     var tempModel = $.parseJSON(model);
@@ -53,19 +53,19 @@ function drawModel() {
     for (var i = 0; i < Width * Height; i++) {
         switch (Array[i].Status) {
         case 0:
-            drawCell(Array[i].X, Array[i].Y, 'Empty');
+            drawCell(Array[i].X, Array[i].Y, 'Empty', null);
             break;
         case 1:
-            drawCell(Array[i].X, Array[i].Y, 'Born');
+            drawCell(Array[i].X, Array[i].Y, 'Born', Array[i].Organism.Genome);
             break;
         case 2:
-            drawCell(Array[i].X, Array[i].Y, 'Live');
+            drawCell(Array[i].X, Array[i].Y, 'Live', Array[i].Organism.Genome);
             break;
         case 3:
-            drawCell(Array[i].X, Array[i].Y, 'Dead');
+            drawCell(Array[i].X, Array[i].Y, 'Dead', null);
             break;
         case 4:
-            drawCell(Array[i].X, Array[i].Y, 'Create');
+            drawCell(Array[i].X, Array[i].Y, 'Create', Array[i].Organism.Genome);
             break;
         }
     }
@@ -115,24 +115,56 @@ function drawField(width, height) {
     }
 }
 // Draw one cell with special color
-function drawCell(x, y, type) {
+
+function drawCell(x, y, type, genome) {
     switch (type) {
     case 'Empty':
         ctx.fillStyle = '#FFFFFF';
         break;
-    case 'Born':
+    case 'Dead':
+        ctx.fillStyle = '#FFFFFF';
+        break;
+    /*  case 'Born':
         ctx.fillStyle = '#FFFF00';
         break;
-    case 'Live':
+        case 'Live':
         ctx.fillStyle = '#00FF00';
         break;
-    case 'Dead':
-        ctx.fillStyle = '#FF0000';
-        break;
-    case 'Create':
+        case 'Create':
         ctx.fillStyle = '#FFFF00';
-        break;
+        break;*/
     }
-ctx.fillRect(CellSize * x + 1, CellSize * y + 1, CellSize - 2, CellSize - 2);
+if (type == 'Born' || type == 'Live' || type == 'Create') {
+    //alert(genome.toString(2));
+    if (genome < 2) {
+        ctx.fillStyle = '#FF0000';
+    }
+    else if (genome < 4) {
+        ctx.fillStyle = '#FF3300';
+    }
+    else if (genome < 8) {
+        ctx.fillStyle = '#00CC00';
+    }
+    else if (genome < 16) {
+        ctx.fillStyle = '#33FF00';
+    }
+    else if (genome < 32) {
+        ctx.fillStyle = '#FF6600';
+    }
+    else if (genome < 64) {
+        ctx.fillStyle = '#FFFF00';
+    }
+    else if (genome < 128) {
+        ctx.fillStyle = '#B580FE';
+    }
+    else if (genome < 256) {
+        ctx.fillStyle = '#009999';
+    }
+    else {
+        ctx.fillStyle = '#0033CC';
+    }
+}
+
+    ctx.fillRect(CellSize * x + 1, CellSize * y + 1, CellSize - 2, CellSize - 2);
 }
 

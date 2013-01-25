@@ -67,7 +67,13 @@ namespace Domain.Support
     /// </summary>
     public struct Coordinate
     {
+        /// <summary>
+        /// Coordinate x
+        /// </summary>
         public int X { get; set; }
+        /// <summary>
+        /// Coordinate y
+        /// </summary>
         public int Y { get; set; }
     }
 }
