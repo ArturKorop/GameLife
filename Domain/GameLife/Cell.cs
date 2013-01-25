@@ -27,7 +27,11 @@ namespace Domain.GameLife
         /// <summary>
         /// Organism of cell
         /// </summary>
-        private Organism _cellOrganism = null;
+        private Organism _cellOrganism;
+        /// <summary>
+        /// Parents of organism
+        /// </summary>
+        private Organism[] _parents;
 
         #endregion
 
@@ -108,6 +112,11 @@ namespace Domain.GameLife
             {
                 if (countNeighbors == 3)
                 {
+                    _parents =
+                        enumerable.Where(
+                            item =>
+                            item.Status == OrganismStatus.Born || item.Status == OrganismStatus.Live ||
+                            item.Status == OrganismStatus.Create).Select(x => x.Organism).ToArray();
                     SetCellStatus(OrganismStatus.Born);
                 }
                 else if(_status == OrganismStatus.Dead)
@@ -126,7 +135,7 @@ namespace Domain.GameLife
         /// <param name="organism"><see cref="Organism"/></param>
         public void SetMigration(Organism organism)
         {
-            _status = OrganismStatus.Live;;
+            _status = OrganismStatus.Live;
             if (_cellOrganism == null)
             {
                 _cellOrganism = organism;
@@ -194,8 +203,16 @@ namespace Domain.GameLife
         /// </summary>
         private void OrganismBorn()
         {
-            var rand = new Random(_x * _y + _x + _y + Environment.TickCount);
-            _cellOrganism = new Organism(rand.Next(511), _x, _y);
+            int inheritGenome;
+            if (_parents != null && _parents.Count() == 3)
+            {
+                inheritGenome = _parents.Sum(x => x.Genome)/3;
+            }
+            else
+            {
+                throw new Exception("Error parents");
+            }
+            _cellOrganism = new Organism(inheritGenome, _x, _y);
         }
         /// <summary>
         /// Organism live

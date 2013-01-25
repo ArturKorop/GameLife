@@ -39,6 +39,10 @@ namespace WebUI.Controllers
             }
             return null;
         }
+        /// <summary>
+        /// Prepare to next step
+        /// </summary>
+        /// <returns>JSON data or View</returns>
         public ActionResult PreapreGameModel()
         {
             if ((Session["Model"]) != null)

@@ -192,15 +192,11 @@ namespace Domain.GameLife
         private void GameLifeEngineNextStep()
         {
             var tempArray = new Cell[_widthField,_heightField];
-            //InitArrayCell(ref tempArray);
             for (int i = 0; i < _widthField; i++)
             {
                 for (int j = 0; j < _heightField; j++)
                 {
-                    //var prepareResult = _arrayCell[i, j].Prepare(GetNeighborCell(_arrayCell[i, j]));
                     var neighbor8 = GetNeighborCell(_arrayCell[i, j], 8);
-                    // var neighbor24 = GetNeighborCell(_arrayCell[i, j], 24);
-
                     var temp = _arrayCell[i, j].Clone();
                     _arrayCell[i, j].NextStep(neighbor8);
                     tempArray[i, j] = _arrayCell[i, j];

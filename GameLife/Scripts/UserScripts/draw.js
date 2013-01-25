@@ -18,7 +18,6 @@ var Age = 0;
 
 // Begin draw
 function startCanvas(model) {
-    alert(model);
     CanvasWidth = $('#canvas').prop('width');
     CanvasHeight = $('#canvas').prop('height');
     var tempModel = $.parseJSON(model);
